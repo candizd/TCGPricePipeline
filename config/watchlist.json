@@ -1,0 +1,26 @@
+{
+  "_comment": "F1'de seçilen izlenecek setler. game=JustTCG game id, set=JustTCG set id, lang=veri dili, enabled=şu an çekiliyor mu. İlk 5 ile başlıyoruz; genişletmek için enabled:true yap (kod değişmez). Pokémon EN/JP aynı dönem (Mega Evolution çağı) -> kart seviyesinde eşleştirilip JP/EN primi hesaplanacak.",
+  "justtcg": {
+    "pokemon": [
+      { "set": "me01-mega-evolution-pokemon", "lang": "EN", "enabled": true },
+      { "set": "sv-black-bolt-pokemon", "lang": "EN", "enabled": true },
+      { "set": "me02-phantasmal-flames-pokemon", "lang": "EN", "enabled": false },
+      { "set": "me03-perfect-order-pokemon", "lang": "EN", "enabled": false },
+      { "set": "me04-chaos-rising-pokemon", "lang": "EN", "enabled": false }
+    ],
+    "pokemon-japan": [
+      { "set": "m1l-mega-brave-pokemon-japan", "lang": "JP", "enabled": true },
+      { "set": "m5-abyss-eye-pokemon-japan", "lang": "JP", "enabled": true },
+      { "set": "m2-inferno-x-pokemon-japan", "lang": "JP", "enabled": false },
+      { "set": "m3-nihil-zero-pokemon-japan", "lang": "JP", "enabled": false },
+      { "set": "m4-ninja-spinner-pokemon-japan", "lang": "JP", "enabled": false }
+    ],
+    "one-piece-card-game": [
+      { "set": "the-time-of-battle-one-piece-card-game", "lang": "EN", "enabled": true },
+      { "set": "adventure-on-kami-s-island-one-piece-card-game", "lang": "EN", "enabled": false },
+      { "set": "extra-booster-one-piece-heroines-edition-one-piece-card-game", "lang": "EN", "enabled": false },
+      { "set": "the-azure-sea-s-seven-one-piece-card-game", "lang": "EN", "enabled": false },
+      { "set": "carrying-on-his-will-one-piece-card-game", "lang": "EN", "enabled": false }
+    ]
+  }
+}
