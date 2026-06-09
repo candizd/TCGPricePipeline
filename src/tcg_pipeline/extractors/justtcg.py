@@ -8,6 +8,7 @@ ve dikkatli istek sayımı kritik.
 from __future__ import annotations
 
 import time
+from collections.abc import Iterator
 from typing import Any
 
 import httpx
@@ -27,20 +28,33 @@ class JustTCGExtractor:
 
     source_name = SOURCE_NAME
 
-    def __init__(self, api_key: str | None = None, timeout: float = 30.0) -> None:
+    def __init__(
+        self, api_key: str | None = None, timeout: float = 30.0, min_interval: float = 6.5
+    ) -> None:
         self.api_key = api_key or config.get("JUSTTCG_API_KEY")
         if not self.api_key:
             raise JustTCGError("JUSTTCG_API_KEY yok — .env'e ekle.")
+        # Proaktif throttle: free tier 10 istek/dk -> 6.5s aralık güvenli (reaktif
+        # 429 backoff'a güvenmekten iyi; limiti baştan aşmayız).
+        self._min_interval = min_interval
+        self._last_req = 0.0
         self._client = httpx.Client(
             base_url=BASE_URL,
             headers={"x-api-key": self.api_key},
             timeout=timeout,
         )
 
-    # --- düşük seviye: 429 backoff'lu GET ---
+    def _throttle(self) -> None:
+        elapsed = time.monotonic() - self._last_req
+        if elapsed < self._min_interval:
+            time.sleep(self._min_interval - elapsed)
+        self._last_req = time.monotonic()
+
+    # --- düşük seviye: throttle + 429 backoff'lu GET ---
     def _get(self, path: str, params: dict[str, Any] | None = None, *, max_retries: int = 5) -> dict:
         delay = 1.0
         for attempt in range(max_retries + 1):
+            self._throttle()
             resp = self._client.get(path, params=params)
             if resp.status_code == 429:
                 # rate limit — Retry-After'ı onurlandır, yoksa exp backoff + cap 30s
@@ -64,6 +78,26 @@ class JustTCGExtractor:
     def get_cards(self, **params: Any) -> dict:
         """Ham /cards yanıtı. params: game, set, q, limit, orderBy, ..."""
         return self._get("/cards", params=params)
+
+    def iterate_card_pages(
+        self, *, game: str, set: str, page_size: int = 20, **extra: Any
+    ) -> Iterator[tuple[int, dict]]:
+        """Bir setin tüm kartlarını SAYFA SAYFA, HAM yanıt olarak ver.
+
+        (page_index, full_response) yield eder; bronze'a sayfa başına yazmak için.
+        meta.hasMore ile durur. Her sayfa 1 API isteği = rate limit'i sayfa
+        sayısı belirler. NOT: free tier'da limit max 20 (GET ve POST batch ikisi de).
+        """
+        offset = 0
+        page = 0
+        while True:
+            resp = self.get_cards(game=game, set=set, limit=page_size, offset=offset, **extra)
+            yield page, resp
+            meta = resp.get("meta", {}) if isinstance(resp, dict) else {}
+            if not meta.get("hasMore"):
+                break
+            offset += page_size
+            page += 1
 
     # --- Protocol arayüzü ---
     def fetch_raw(self, **params: Any) -> list[dict[str, Any]]:

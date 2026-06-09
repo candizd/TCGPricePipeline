@@ -1,16 +1,17 @@
 {
-  "_comment": "F1'de seçilen izlenecek setler. game=JustTCG game id, set=JustTCG set id, lang=veri dili, enabled=şu an çekiliyor mu. İlk 5 ile başlıyoruz; genişletmek için enabled:true yap (kod değişmez). Pokémon EN/JP aynı dönem (Mega Evolution çağı) -> kart seviyesinde eşleştirilip JP/EN primi hesaplanacak.",
+  "_comment": "F1/F2 izlenecek setler. game=JustTCG game id, set=set id, lang=dil, enabled=çekiliyor mu, min_price=API-side fiyat filtresi USD (bulk common'ları eler, istek sayısını düşürür; rarity filtresi API'de çalışmıyor). İlk 3 aktif. Pokémon EN/JP aynı dönem (Mega) -> kart seviyesi eşleştirme -> JP/EN primi.",
+  "defaults": { "min_price": 1 },
   "justtcg": {
     "pokemon": [
       { "set": "me01-mega-evolution-pokemon", "lang": "EN", "enabled": true },
-      { "set": "sv-black-bolt-pokemon", "lang": "EN", "enabled": true },
+      { "set": "sv-black-bolt-pokemon", "lang": "EN", "enabled": false },
       { "set": "me02-phantasmal-flames-pokemon", "lang": "EN", "enabled": false },
       { "set": "me03-perfect-order-pokemon", "lang": "EN", "enabled": false },
       { "set": "me04-chaos-rising-pokemon", "lang": "EN", "enabled": false }
     ],
     "pokemon-japan": [
       { "set": "m1l-mega-brave-pokemon-japan", "lang": "JP", "enabled": true },
-      { "set": "m5-abyss-eye-pokemon-japan", "lang": "JP", "enabled": true },
+      { "set": "m5-abyss-eye-pokemon-japan", "lang": "JP", "enabled": false },
       { "set": "m2-inferno-x-pokemon-japan", "lang": "JP", "enabled": false },
       { "set": "m3-nihil-zero-pokemon-japan", "lang": "JP", "enabled": false },
       { "set": "m4-ninja-spinner-pokemon-japan", "lang": "JP", "enabled": false }
